@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1.0, minimum-scale=1.0">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="./docsify/themes/vue.css">
+  <link href="./docsify/katex/katex.min.css" rel="stylesheet">
+  <link rel="manifest" href="manifest.json" />
+  <script src="./docsify/katex/katex.min.js"></script>
+  <script async src="./docsify/busuanzi/busuanzi.pure.mini.js"></script>
+  <!-- <link rel="stylesheet" href="./docsify/gitalk/gitalk.css"> -->
+  <link rel="shortcut icon" href="./_media/logo.png"/>
+  <style>
+	.app-name-link img{
+		max-width: 50px;
+	}
+  </style>
+</head>
+<body>
+  <div id="main"><p style="margin-top: 20%;text-align: center;">请稍等...</p></div>
+  <script>
+    window.$docsify = {
+		el: '#main',						// 主容器id名
+		name: '<strong>我的笔记</strong>',				// 显示在侧边栏的网站名称
+		// nameLink: '/',					// 名称链接
+		// logo: './_media/logo.svg',		// 出现在侧边栏的logo，猜测logo与name只能同时出现一个
+		homepage: 'README.md',				// 主页，默认为README.md
+		coverpage: true,					// 封面，类型： Boolean|String|String[]|Object
+		// coverpage: ['/', '/zh-cn/'],		// 给多个目录设置单独的封面
+		// onlyCover: true,					// 仅显示封面
+		basePath: '/',						// 网站的根目录。可以将其设置为另一个目录或另一个域名。
+		relativePath: true,					// 启用相对路径，即文件之间的跳转使用相对路径
+		loadSidebar: true,					// 使用默认的_sidebar.md作为侧边栏 也可为文件地址
+        // autoHeader: true,				// 当文件没有一级标题时，在头部插入文件名作为一级标题
+        // hideSidebar: true,				// 完全隐藏侧边栏
+        loadNavbar: true,					// 启用自定义导航栏
+		alias: {							// 设置路由，支持RegExp
+			'/.*/_sidebar.md': '/_sidebar.md', // 所有的侧边栏都使用根目录下的_sidebar.md，而不是父级的_sidebar.md
+			'/.*/_navbar.md': '/_navbar.md' // 同上
+		},
+		maxLevel: 1,						// 未设置侧边栏文件时自动生成目录的最小标题等级，loadSidebar为true时失效
+		subMaxLevel: 1,						// 设置侧边栏文件后自动生成目录的最小标题等级，loadSidebar为false时失效
+		auto2top: true,						// 更改线路时自动滚动到顶部
+		// themeColor: '#4ea1db',				// 自定义主题颜色
+		executeScript: true,				// 执行md文件上的js脚本
+		// noEmoji: true,					// 禁用emoji解析
+		// formatUpdated: '<br><hr>上次编辑：{YYYY}/{MM}/{DD} {HH}:{mm}', // 显示文件更新时间 {docsify-updated}
+		formatUpdated: function(time) {		// 使用函数处理文件更新时间
+			time = new Date( Date.parse(time) );
+			var _ft = {
+				'Y' : time.getFullYear(),	// 年
+				'M' : time.getMonth() + 1,	// 月
+				'd' : time.getDate(),		// 日
+				'h' : time.getHours(),		// 时
+				'm' : time.getMinutes(),	// 分
+				// 's' : time.getSeconds()	// 秒
+			};
+			0 < _ft['M'] && _ft['M'] < 10 ? _ft['M'] = '0' + _ft['M'] : true;
+			0 < _ft['d'] && _ft['d'] < 10 ? _ft['d'] = '0' + _ft['d'] : true;
+			_ft['h'] < 10 ? _ft['h'] = '0' + _ft['h'] : true;
+			_ft['m'] < 10 ? _ft['m'] = '0' + _ft['m'] : true;
+
+			var formatTime = _ft['Y'] + '/' + _ft['M'] + '/' + _ft['d'] + ' ' + _ft['h'] + ':' + _ft['m'];
+			
+			function oral(time, nowTime) {
+				var differ = nowTime - time;
+				var dist = [];
+				var distName = ['年', '个月', '天', '小时', '分钟', '秒'];
+
+				var	Y = Math.floor(differ / 31536000000);
+				if (Y > 0) differ %= 31536000000;
+				dist.push(Y);
+
+				var	M = Math.floor(differ / 2628000000);
+				if (M > 0) differ %= 2628000000;
+				dist.push(M);
+
+				var d = Math.floor(differ / 86400000);
+				if (d > 0) differ %= 86400000;
+				dist.push(d);
+
+				var h = Math.floor(differ / 3600000);
+				if (h > 0) differ %= 3600000;
+				dist.push(h);
+
+				var	m = Math.floor(differ / 60000);
+				if (m > 0) differ %= 60000;
+				dist.push(m);
+
+				// 没有必要精确到秒了
+				// var	s = parseInt(differ / 1000);
+				// dist.push(s);
+
+				var oral = '';
+				var flag = false;
+				dist.forEach( (value, index) => {
+					if (value) flag = true;
+					if (flag) oral += value + distName[index];
+				});
+
+				if (oral){
+					oral += '前'
+				} else {
+					oral += '刚刚';
+				}
+
+				return oral;
+			}
+
+			var nowTime = new Date();
+			var oral = oral(time, nowTime);
+
+			return '<br><p style="color:#666666;font-size:12px;transform:translateY(2em);"><i>纸上得来终觉浅，绝知此事要躬行。</i></p><hr><span style="cursor:help;" title="'+ oral + '">上次编辑：' + formatTime + '</span>';
+			// 累死俺了。。。
+		},
+		requestHeaders: {						// 设置请求资源的标头
+			'cache-control': 'max-age=600',		// 设置缓存
+		},
+		notFoundPage: true,						// 加载_404.md文件
+		// topMargin: 90,						// 滚动内容页面以到达所选部分时，在顶部添加一个空格。
+        search: false,
+        /* 搜索功能暂不稳定
+		search: {								// 启用搜索
+			// maxAge: 86400000,					// 过期时间，默认为1天
+			// paths: 'auto',						// or 'auto'
+			placeholder: '搜索功能暂不稳定...',
+			noData: '找不到结果...',
+			// depth: 5,							// 查找深度（距离根目录）
+			hideOtherSidebarContent: true,		// 是否隐藏其他边栏内容
+			// namespace: 'website-1'				// 在同一域下的多个网站之间避免搜索索引冲突
+		},
+        */
+        // repo: 'yuannancheng',
+		ga: 'UA-164625171-1', // 谷歌分析跟踪
+
+
+		// 注册数学公式渲染插件
+		markdown: {
+			smartypants: true,
+			renderer: {
+				code: function(code, lang) {
+					if (lang === "tex") {
+						return (
+							'<span class="tex">' + katex.renderToString(code, {
+								throwOnError: false
+							}) + '</span>'
+						);
+					} else if (lang === "shengming") { // 快速进行绑定免责声明样式
+						return ('<p class="_shengming">' + code + '</p>');
+					}
+					return this.origin.code.apply(this, arguments);
+				}
+			}
+		}
+    }
+	window.onhashchange = function(event){
+		if(event.newURL.split('?')[0] !== event.oldURL.split('?')[0]) {
+			// console.log("切换文章");
+			bszCaller.fetch("//busuanzi.ibruce.info/busuanzi?jsonpCallback=BusuanziCallback",
+				function(a) {
+					bszTag.texts(a),
+					bszTag.shows()
+			});
+		}
+    }
+  </script>
+  <!-- docsify插件 -->
+  <script src="./docsify/scripts/docsify.min.js"></script>
+  <!-- emoji插件 -->
+  <script src="./docsify/scripts/emoji.min.js"></script>
+  <!-- search插件 -->
+  <script src="./docsify/scripts/search.min.js"></script>
+  <!-- 外部js插件 -->
+  <script src="./docsify/scripts/external-script.min.js"></script>
+  <!-- 复制代码插件 -->
+  <script src="./docsify/scripts/docsify-copy-code.min.js"></script>
+  <!-- 谷歌分析插件 -->
+  <script src="./docsify/Google Analytics/Google Analytics.min.js"></script>
+  <!-- Gitalk评论插件1 -->
+  <!-- <script src="./docsify/gitalk/docsify-gitalk.min.js"></script> -->
+  <!-- Gitalk评论插件2 -->
+  <!-- <script src="./docsify/gitalk/gitalk.min.js"></script> -->
+  <!-- 分页插件 -->
+  <!-- <script src="./docsify/scripts/docsify-pagination.min.js"></script> -->
+
+
+  <!-- Gitalk实例化 评论功能暂不稳定 -->
+  <!-- <script>
+  	const gitalk = new Gitalk({
+  		clientID: '93a780c0b7e14813b1b3',							// Github应用程序客户端ID
+  		clientSecret: 'a25e9b47df46643aa241a2c262a2ebcb20e70bf1',	// Github应用程序客户端密钥
+  		repo: 'mynote',												// 用于存放评论的Github仓库
+  		owner: 'yuannancheng',										// Github仓库所有者
+  		admin: ['yuannancheng'],				// Github仓库管理员，只有这些人才能初始化Github问题
+  		distractionFreeMode: false,				//类似于Facebook的免打扰模式
+  		language: 'zh-CN',
+  		id: location.hash.match(/#(.*?)([?]|$)/)[1], // 用于标记评论是哪个页面的，确保唯一，并且长度小于50
+  		title: location.hash.match(/#(.*?)([?]|$)/)[1] + ' ' + document.title,
+  		body: '根目录：'+ decodeURIComponent(location.origin + location.pathname),
+  		labels: ['Gitalk-comment'],
+  		// createIssueManually: true
+  	})
+  </script> -->
+
+
+  <!-- 离线模式 -->
+  <script>
+	if (typeof navigator.serviceWorker !== 'undefined') {
+		navigator.serviceWorker.register('sw.js');
+	}
+  </script>
+
+  <!-- 滚动页面函数 -->
+  <script>
+  	function _gotoTop() {
+  		window.scrollTo({ 
+			top: 0,
+			behavior: "smooth"
+		});
+  	}
+  	function _gotoBottom() {
+		var max_top = document.documentElement.scrollHeight;
+  		window.scrollTo({ 
+			top: max_top,
+			behavior: "smooth"
+		});
+  	}
+  </script>
+
+  <!-- 播放背景音乐 -->
+  <script>
+	function _playbgm(){
+		var el = document.getElementById('_bgm');
+		if (el) {
+			if(el.paused){
+				el.play();
+			}else{
+				el.pause();
+			}
+		} else {
+			_load_bgm();
+		}
+	}
+  </script>
+
+  <!-- 更换主题 -->
+  <script>
+	function _changeThemeColor(color){
+		color = color || localStorage.getItem("theme-color") || '#42b983';
+		document.documentElement.style.setProperty(`--theme-color`, color);
+		localStorage.setItem("theme-color", color);
+	}
+	_changeThemeColor();
+  </script>
+
+  <!-- 加载bgm并播放，并存入数据库 -->
+	<script>
+
+		function _load_bgm() {
+		    var _bgm = {
+		        '好久不见' : 'http://sinacloud.net/myfiles/music/好久不见.mp3'
+		    }
+		    var name = '好久不见'
+		    
+		    var el = document.getElementsByClassName('cover-main')[0];
+		    var audio = document.createElement('audio');
+		    audio.id = '_bgm';
+		    el.append(audio);
+		    
+		    // 打开数据库获取文件
+		    var req = window.indexedDB.open('audioCacher');
+		    req.onupgradeneeded = function(e){
+		    	// 第一次打开
+		        var db = e.target.result;
+		        if( ! db.objectStoreNames.contains("_bgm")){
+		            //创建一个名字为audioCacher的对象仓库，并将其 id 作为该 对象仓库 的主键
+		            var userObjStore = db.createObjectStore("_bgm", {keyPath: 'key', autoIncrement: true});
+		            userObjStore.createIndex("nameIndex", 'name',{unique:false});
+		        }
+		    }
+		    
+		    req.onsuccess = function(e){
+		    	// 成功打开
+		        var db = e.target.result;
+		        var t = db.transaction(["_bgm"], "readwrite");
+		        var store = t.objectStore("_bgm");
+		        var index = store.index('nameIndex');
+		        // 通过自定义键名获取索引
+		        var request = index.get(name);
+		        
+		        // 读取成功
+		        request.onsuccess = function(e){
+		            var data = e.target.result;
+		            if ( data && data.name == name ) {
+		            	audio.setAttribute("src", data.bin);
+		            	// console.log('从本地数据库中读取成功');
+		            } else {
+		            	var xhr = new XMLHttpRequest();
+		                var fileReader = new FileReader();
+		                xhr.open("GET", _bgm[name], true);
+		                xhr.responseType = 'blob';
+		                xhr.addEventListener("load", function () {
+		                    if (xhr.status === 200) {
+		                        var blob = this.response;
+		                        fileReader.onload = function (evt) {
+		                            // 用Data URI的格式读取文件内容
+		                            var result = evt.target.result;
+		    
+		                            // 将audio的src指向Data URI
+		                            audio.setAttribute("src", result);
+		    
+		                            //保存到数据库中
+		                            // 注意！！！ 每次读写，你都应该新建一个事务来进行操作
+		                            var t = db.transaction(["_bgm"], "readwrite");
+		                            var store = t.objectStore("_bgm");
+		                            var putResult = store.put({
+		                                name : name,
+		                                bin : result
+		                            });
+		    
+		                            putResult.onsuccess = function(){
+		                                // console.log("已将 '" + name + "' 缓存到本地数据库中");
+		                            };
+		    
+		                            putResult.οnerrοr = function(){
+		                                console.log("将 '" + name + "' 缓存到本地数据库中时出现错误");
+		                            }
+		                        };
+		                        // 以Data URI的形式加载blob
+		                        fileReader.readAsDataURL(blob);
+		                    }
+		                }, false);
+		                // 发送异步请求
+		                xhr.send();
+		            }
+		        };
+		    
+		        // 读取失败
+		        request.onerror = function(){
+		            console.log("获取数据错误");
+		        };
+		    }
+
+		    audio.play();
+		}
+
+	</script>
+</body>
+</html>
