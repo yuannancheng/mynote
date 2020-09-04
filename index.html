@@ -29,7 +29,7 @@
 		coverpage: true,					// 封面，类型： Boolean|String|String[]|Object
 		// coverpage: ['/', '/zh-cn/'],		// 给多个目录设置单独的封面
 		// onlyCover: true,					// 仅显示封面
-		basePath: '/',						// 网站的根目录。可以将其设置为另一个目录或另一个域名。
+		basePath: '/mynote/',				// 网站的根目录。可以将其设置为另一个目录或另一个域名。
 		relativePath: true,					// 启用相对路径，即文件之间的跳转使用相对路径
 		loadSidebar: true,					// 使用默认的_sidebar.md作为侧边栏 也可为文件地址
         // autoHeader: true,				// 当文件没有一级标题时，在头部插入文件名作为一级标题
@@ -204,13 +204,6 @@
   </script> -->
 
 
-  <!-- 离线模式 -->
-  <script>
-	if (typeof navigator.serviceWorker !== 'undefined') {
-		navigator.serviceWorker.register('sw.js');
-	}
-  </script>
-
   <!-- 滚动页面函数 -->
   <script>
   	function _gotoTop() {
@@ -345,6 +338,13 @@
 		    audio.play();
 		}
 
+	</script>
+
+	<!-- 离线模式 -->
+	<script>
+		if (typeof navigator.serviceWorker !== 'undefined') {
+			navigator.serviceWorker.register('sw.js?v=202009041019');
+		}
 	</script>
 </body>
 </html>
